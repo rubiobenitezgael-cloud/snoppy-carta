@@ -9,8 +9,8 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 
 // --- CONFIGURACIÓN DE TELEGRAM ---
-const TELEGRAM_TOKEN = "8514200391:AAH8G53x4pVBnUw96l3xFPO4P8RbQVLpSPQ";
-const TELEGRAM_CHAT_ID = "7083988483";
+const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
 app.post('/enviar-carta', (req, res) => {
     const { nombre, imagen } = req.body;
