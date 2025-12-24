@@ -6,15 +6,12 @@
 <title>Carta de los Snoppys</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-
-<!-- Fuente -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
-
-
 
 <style>
 * {
     box-sizing: border-box;
+    scroll-behavior: smooth; /* Para que el auto-scroll sea suave */
 }
 
 body {
@@ -25,24 +22,35 @@ body {
     overflow-x: hidden;
 }
 
-/* 🎄 Luces */
+/* 🎄 Luces Navideñas Mejoradas */
 .luces {
     display: flex;
     justify-content: space-around;
-    padding: 10px;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    background: #222; /* Cable */
+    height: 3px;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
 }
 .luces span {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
+    width: 12px;
+    height: 18px;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    position: relative;
+    top: 2px;
     animation: parpadeo 1.5s infinite alternate;
 }
-.luces span:nth-child(odd) { background: red; }
-.luces span:nth-child(even) { background: green; }
+.luces span:nth-child(4n+1) { background: #ff0000; box-shadow: 0 0 10px #ff0000; }
+.luces span:nth-child(4n+2) { background: #00ff00; box-shadow: 0 0 10px #00ff00; animation-delay: 0.3s; }
+.luces span:nth-child(4n+3) { background: #ffff00; box-shadow: 0 0 10px #ffff00; animation-delay: 0.6s; }
+.luces span:nth-child(4n+4) { background: #0000ff; box-shadow: 0 0 10px #0000ff; animation-delay: 0.9s; }
 
 @keyframes parpadeo {
-    from { opacity: 0.3; }
-    to { opacity: 1; }
+    from { opacity: 0.3; filter: brightness(0.8); }
+    to { opacity: 1; filter: brightness(1.4); }
 }
 
 /* ❄️ Nieve */
@@ -89,12 +97,13 @@ body {
     text-align: center;
 }
 
-input {
+input, textarea {
     width: 100%;
     padding: 10px;
     margin: 10px 0;
     border-radius: 8px;
     border: 1px solid #ccc;
+    font-family: inherit;
 }
 
 button {
@@ -120,13 +129,11 @@ button:hover {
     margin-top: 20px;
     white-space: pre-wrap;
     box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-
     width: 650px;
     max-width: 100%;
     font-size: 0.95em;
     line-height: 1.6;
 }
-
 
 /* 🐶 Snoopy carta */
 .snoopy-carta {
@@ -149,39 +156,43 @@ button:hover {
 
 <body>
 
-<!-- 🎶 Villancico -->
 <audio id="villancico" preload="auto">
     <source src="https://cdn.pixabay.com/download/audio/2022/12/22/audio_cfa4e01b4e.mp3" type="audio/mpeg">
 </audio>
 
 
-<!-- 🎄 Luces -->
 <div class="luces">
-    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
 </div>
 
-<!-- ❄️ Nieve -->
 <div class="snow">
     <span style="left:10%;animation-duration:6s;"></span>
-     <span style="left:20%;animation-duration:7s;"></span>
+    <span style="left:20%;animation-duration:7s;"></span>
     <span style="left:30%;animation-duration:8s;"></span>
-     <span style="left:40%;animation-duration:6s;"></span>
+    <span style="left:40%;animation-duration:6s;"></span>
     <span style="left:50%;animation-duration:7s;"></span>
-     <span style="left:60%;animation-duration:8s;"></span>
+    <span style="left:60%;animation-duration:8s;"></span>
     <span style="left:70%;animation-duration:9s;"></span>
-     <span style="left:80%;animation-duration:7s;"></span>
+    <span style="left:80%;animation-duration:7s;"></span>
     <span style="left:90%;animation-duration:6s;"></span>
 </div>
 
 <div class="container">
 
-<!-- 🐶 Snoopy saludando -->
 <img src="https://upload.wikimedia.org/wikipedia/en/5/53/Snoopy_Peanuts.png" class="snoopy-saludo">
 
 <div class="formulario-container">
     <h2>🎄 Crea tu Snoppy carta 🎄</h2>
     <input type="text" id="nombreUsuario" placeholder="Escribe tu nombre">
     <button onclick="generarCarta()">🎁 Púchale pa darte tu carta</button>
+
+    <div style="margin-top: 30px; border-top: 1px solid #ddd; padding-top: 20px;">
+        <h3>✍️ Escribe tu propia carta para los Snoppys</h3>
+        <textarea id="cartaPersonalizada" rows="5" placeholder="Escribe aquí tu mensaje..."></textarea>
+        <br>
+        <button onclick="enviarCartaPersonalizada()" style="background-color: #b30000;">✉️ Enviar mi carta a los Snoppys</button>
+    </div>
 </div>
 
 <div class="carta-container" id="areaCarta"></div>
@@ -196,11 +207,7 @@ button:hover {
 function generarCarta() {
     const audio = document.getElementById("villancico");
     audio.volume = 0.5;
-    audio.load();
-    audio.play().catch(error => {
-        console.log("Audio bloqueado:", error);
-        audio.loop = true;
-    });
+    audio.play().catch(error => console.log("Audio bloqueado"));
 
     const nombre = document.getElementById('nombreUsuario').value.trim();
     const areaCarta = document.getElementById('areaCarta');
@@ -210,115 +217,84 @@ function generarCarta() {
         return;
     }
 
-    // Aquí van todas tus cartas como strings, usando `\`` para multi-líneas
     const cartas = [
-        `Estimado/a ${nombre} Snoppy amigo 🎄
-
-¡Gracias por haber formado parte de nuestro año y acompañarnos en nuestras aventuras!
-Fue un año maravilloso al saber que formaste parte de nosotros, siguiéndonos y compartiendo todas nuestras locuras.
-
-De parte de los Snoppys esperamos que pases un excelente cierre de año, disfrutando fechas especiales como Navidad y Año Nuevo junto a tu familia.
-Esperamos con ansias el próximo año y contar nuevamente con tu compañía.
-
-¡Oficialmente eres un Snoppy amigo! 🐶✨
-
-Atentamente,
-
-Los Snoppys`,
-
-        `¡Hola ${nombre} Snoppy amigo! 🎉
-
-Este año ha sido increíble gracias a personas como tú. 
-Esperamos que tengas unas fiestas llenas de alegría y diversión.
-Nos vemos el próximo año para más aventuras y risas.
-
-Con cariño,
-
-Tus amigos los Snoppys 🐾`,
-
-        `Querido/a ${nombre} Snoppy amigo 🎄🐶
-
-Que estas fiestas te llenen de felicidad y que el próximo año sea aún más emocionante.
-Gracias por seguir nuestras locuras y ser parte de esta comunidad tan especial.
-
-Con mucho amor,
-
-Los Snoppys`,
-
-        `¡Ho-ho-hola! ${nombre} Snoppy amigo 🎅🏽
-
-Solo pasábamos a decirte que esperamos que tu Navidad este llena de risas, regalos sorpresa y muuuchos momentos divertidos.
-¡Gracias por estar siempre con nosotros! 🎁💛
-
-Les desean,
-
-Los snoppys`,
-
-        `Ey, ey ey... ${nombre}
-
-Si llegaste hasta aquí, significa que tú también formas parte de nuestra locura navideña.
-
-Que santa te traiga todo lo que pediste... y un poquito de paciencia para aguantar la familia 😜🎄
-
-Atentamente,
-
-Los Snoppys`,
-
-        `¡Feliz cierre de año, ${nombre}!
-
-Que el 2026 venga con más aventuras, más risas y menos malos momentos.
-Nos alegra un montón que sigas aquí, formando parte de estas locuras con nosotros 🥂✨
-
-Les desean,
-
-Sus amigos los Snoppys`,
-
-        `Heyyy, ${nombre}, sí, tú 😉
-
-Solo queríamos pasar a recordarte que eres lo mejor de este año.
-Gracias por aguantar nuestras públicaciones tontas y nuestros chistes malos. ¡Los queremos! ❤️​🎄
-
-Con mucho afecto,
-
-Los Snoppys`,
-
-        `¡Feliz Navidad ${nombre} Snoppy amigo!
-
-Si crees que los regalos son lo mejor... no has sentido nuestro cariño.
-
-Nos encanta compartir risas, fotos, y momentos contigo.
-¡Gracias por seguir aquí! 🎉💛
-
-De todo corazón,
-
-Los Snoppys`,
+        `Estimado/a ${nombre} Snoppy amigo 🎄\n\n¡Gracias por haber formado parte de nuestro año y acompañarnos en nuestras aventuras!\nFue un año maravilloso al saber que formaste parte de nosotros, siguiéndonos y compartiendo todas nuestras locuras.\n\nDe parte de los Snoppys esperamos que pases un excelente cierre de año, disfrutando fechas especiales como Navidad y Año Nuevo junto a tu familia.\nEsperamos con ansias el próximo año y contar nuevamente con tu compañía.\n\n¡Oficialmente eres un Snoppy amigo! 🐶✨\n\nAtentamente,\n\nLos Snoppys`,
+        `¡Hola ${nombre} Snoppy amigo! 🎉\n\nEste año ha sido increíble gracias a personas como tú. \nEsperamos que tengas unas fiestas llenas de alegría y diversión.\nNos vemos el próximo año para más aventuras y risas.\n\nCon cariño,\n\nTus amigos los Snoppys 🐾`,
+        `Querido/a ${nombre} Snoppy amigo 🎄🐶\n\nQue estas fiestas te llenen de felicidad y que el próximo año sea aún más emocionante.\nGracias por seguir nuestras locuras y ser parte de esta comunidad tan especial.\n\nCon mucho amor,\n\nLos Snoppys`,
+        `¡Ho-ho-hola! ${nombre} Snoppy amigo 🎅🏽\n\nSolo pasábamos a decirte que esperamos que tu Navidad este llena de risas, regalos sorpresa y muuuchos momentos divertidos.\n¡Gracias por estar siempre con nosotros! 🎁💛\n\nLes desean,\n\nLos snoppys`,
+        `Ey, ey ey... ${nombre}\n\nSi llegaste hasta aquí, significa que tú también formas parte de nuestra locura navideña.\n\nQue santa te traiga todo lo que pediste... y un poquito de paciencia para aguantar la familia 😜🎄\n\nAtentamente,\n\nLos Snoppys`,
+        `¡Feliz cierre de año, ${nombre}!\n\nQue el 2026 venga con más aventuras, más risas y menos malos momentos.\nNos alegra un montón que sigas aquí, formando parte de estas locuras con nosotros 🥂✨\n\nLes desean,\n\nSus amigos los Snoppys`,
+        `Heyyy, ${nombre}, sí, tú 😉\n\nSolo queríamos pasar a recordarte que eres lo mejor de este año.\nGracias por aguantar nuestras públicaciones tontas y nuestros chistes malos. ¡Los queremos! ❤️​🎄\n\nCon mucho afecto,\n\nLos Snoppys`,
+        `¡Feliz Navidad! ${nombre} Snoppy amigo!\n\nSi crees que los regalos son lo mejor... no has sentido nuestro cariño.\n\nNos encanta compartir risas, fotos, y momentos contigo.\n¡Gracias por seguir aquí! 🎉💛\n\nDe todo corazón,\n\nLos Snoppys`
     ];
 
-    // Elegir una carta aleatoria
     const cartaAleatoria = cartas[Math.floor(Math.random() * cartas.length)];
 
     areaCarta.innerHTML = `
-      <img 
-        src="https://raw.githubusercontent.com/rubiobenitezgael-cloud/snoppy-carta/f7eef26572b8d322646d1b7a37ef530bcddcd141/snopy.png"
-        class="snoopy-carta"
-        crossorigin="anonymous">
-
-        ${cartaAleatoria}
+      <img src="https://raw.githubusercontent.com/rubiobenitezgael-cloud/snoppy-carta/f7eef26572b8d322646d1b7a37ef530bcddcd141/snopy.png" class="snoopy-carta" crossorigin="anonymous">
+      ${cartaAleatoria}
     `;
 
     areaCarta.style.display = "block";
     document.getElementById("btnDescargar").style.display = "block";
+
+    // AUTO-SCROLL: Baja automáticamente a la carta
+    areaCarta.scrollIntoView({ behavior: 'smooth' });
 }
 
+async function enviarCartaPersonalizada() {
+    const nombre = document.getElementById('nombreUsuario').value.trim();
+    const texto = document.getElementById('cartaPersonalizada').value.trim();
+    const areaCarta = document.getElementById('areaCarta');
 
+    // 1. VALIDACIÓN (Siempre va primero)
+    if (!nombre || !texto) {
+        alert("Por favor, ingresa tu nombre y escribe un mensaje.");
+        return;
+    }
+
+    // 2. DIBUJAR LA CARTA (Para que html2canvas tenga algo que fotografiar)
+    areaCarta.innerHTML = `
+      <img src="https://raw.githubusercontent.com/rubiobenitezgael-cloud/snoppy-carta/f7eef26572b8d322646d1b7a37ef530bcddcd141/snopy.png" class="snoopy-carta" crossorigin="anonymous">
+      Queridos Snoppys,\n\n${texto}\n\nAtentamente,\n${nombre}
+    `;
+
+    areaCarta.style.display = "block";
+    document.getElementById("btnDescargar").style.display = "none";
+    
+    // AUTO-SCROLL para que el usuario vea su carta
+    areaCarta.scrollIntoView({ behavior: 'smooth' });
+
+    // 3. CONVERTIR A IMAGEN Y ENVIAR (Backend)
+    try {
+        const canvas = await html2canvas(areaCarta, { scale: 2, useCORS: true });
+        const imagenBase64 = canvas.toDataURL("image/png");
+
+        const URL_BACKEND = "https://snoppy-backend.onrender.com/enviar-carta";
+
+        const respuesta = await fetch(URL_BACKEND, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+                nombre: nombre, 
+                imagen: imagenBase64 
+            })
+        });
+
+        if (respuesta.ok) {
+            alert("¡Los Snoppys han recibido tu carta! 🐶🎁");
+        } else {
+            alert("Error al enviar la carta al servidor.");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Hubo un problema al procesar la imagen de tu carta.");
+    }
+}
 function descargarCarta() {
     const carta = document.getElementById("areaCarta");
-
     document.fonts.ready.then(() => {
-        html2canvas(carta, {
-            scale: 2,
-            useCORS: true
-        }).then(canvas => {
+        html2canvas(carta, { scale: 2, useCORS: true }).then(canvas => {
             const link = document.createElement("a");
             link.href = canvas.toDataURL("image/png");
             link.download = "Carta_Snoppy.png";
@@ -326,9 +302,8 @@ function descargarCarta() {
         });
     });
 }
-
-
 </script>
 
 </body>
+</html>
 </html>
