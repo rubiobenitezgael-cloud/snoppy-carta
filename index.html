@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carta de los Snoppys</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+
+<!-- Fuente -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+
+
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Playfair Display", serif;
+    background: linear-gradient(to bottom, #b30000, #ffffff);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* 🎄 Luces */
+.luces {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+}
+.luces span {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    animation: parpadeo 1.5s infinite alternate;
+}
+.luces span:nth-child(odd) { background: red; }
+.luces span:nth-child(even) { background: green; }
+
+@keyframes parpadeo {
+    from { opacity: 0.3; }
+    to { opacity: 1; }
+}
+
+/* ❄️ Nieve */
+.snow span {
+    position: fixed;
+    top: -10px;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    animation: caer linear infinite;
+}
+@keyframes caer {
+    to {
+        transform: translateY(110vh);
+        opacity: 0;
+    }
+}
+
+/* 📦 Contenedor */
+.container {
+    max-width: 700px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* 🐶 Snoopy saludando */
+.snoopy-saludo {
+    display: block;
+    margin: 20px auto;
+    width: 160px;
+    animation: saludo 1.2s infinite alternate;
+}
+@keyframes saludo {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(8deg); }
+}
+
+/* 📝 Formulario */
+.formulario-container {
+    background: rgba(255,255,255,0.95);
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+button {
+    padding: 12px 18px;
+    border: none;
+    border-radius: 10px;
+    background: #0b6623;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+}
+button:hover {
+    background: #064d1a;
+}
+
+/* 📜 Carta */
+.carta-container {
+    display: none;
+    background: #fffaf0;
+    border: 3px solid #b30000;
+    border-radius: 20px;
+    padding: 25px;
+    margin-top: 20px;
+    white-space: pre-wrap;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+
+    width: 650px;
+    max-width: 100%;
+    font-size: 0.95em;
+    line-height: 1.6;
+}
+
+
+/* 🐶 Snoopy carta */
+.snoopy-carta {
+    display: block;
+    margin: 0 auto 15px;
+    width: 140px;
+}
+
+/* 📱 Responsive */
+@media (max-width: 600px) {
+    .snoopy-saludo, .snoopy-carta {
+        width: 120px;
+    }
+    .carta-container {
+        font-size: 1em;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🎶 Villancico -->
+<audio id="villancico" preload="auto">
+    <source src="https://cdn.pixabay.com/download/audio/2022/12/22/audio_cfa4e01b4e.mp3" type="audio/mpeg">
+</audio>
+
+
+<!-- 🎄 Luces -->
+<div class="luces">
+    <span></span><span></span><span></span><span></span><span></span>
+</div>
+
+<!-- ❄️ Nieve -->
+<div class="snow">
+    <span style="left:10%;animation-duration:6s;"></span>
+     <span style="left:20%;animation-duration:7s;"></span>
+    <span style="left:30%;animation-duration:8s;"></span>
+     <span style="left:40%;animation-duration:6s;"></span>
+    <span style="left:50%;animation-duration:7s;"></span>
+     <span style="left:60%;animation-duration:8s;"></span>
+    <span style="left:70%;animation-duration:9s;"></span>
+     <span style="left:80%;animation-duration:7s;"></span>
+    <span style="left:90%;animation-duration:6s;"></span>
+</div>
+
+<div class="container">
+
+<!-- 🐶 Snoopy saludando -->
+<img src="https://upload.wikimedia.org/wikipedia/en/5/53/Snoopy_Peanuts.png" class="snoopy-saludo">
+
+<div class="formulario-container">
+    <h2>🎄 Crea tu Snoppy carta 🎄</h2>
+    <input type="text" id="nombreUsuario" placeholder="Escribe tu nombre">
+    <button onclick="generarCarta()">🎁 Púchale pa darte tu carta</button>
+</div>
+
+<div class="carta-container" id="areaCarta"></div>
+
+<button id="btnDescargar" onclick="descargarCarta()" style="display:none; margin:20px auto;">
+ Descargar carta
+</button>
+
+</div>
+
+<script>
+function generarCarta() {
+const audio = document.getElementById("villancico");
+audio.volume = 0.5;
+audio.load();
+
+audio.play().catch(error => {
+    console.log("Audio bloqueado:", error);
+    audio.loop = true;
+
+});
+
+    const nombre = document.getElementById('nombreUsuario').value.trim();
+    const areaCarta = document.getElementById('areaCarta');
+
+    if (!nombre) {
+        alert("Por favor, ingresa un nombre.");
+        return;
+    }
+
+    const textoCarta = `
+Estimado/a ${nombre} Snoppy amigo 🎄
+
+¡Gracias por haber formado parte de nuestro año y acompañarnos en nuestras aventuras!
+Fue un año maravilloso al saber que formaste parte de nosotros, siguiéndonos y compartiendo todas nuestras locuras.
+
+De parte de los Snoppys esperamos que pases un excelente cierre de año, disfrutando fechas especiales como Navidad y Año Nuevo junto a tu familia.
+Esperamos con ansias el próximo año y contar nuevamente con tu compañía.
+
+¡Oficialmente eres un Snoppy amigo! 🐶✨
+
+Atentamente,
+
+Los Snoppys
+`;
+
+    areaCarta.innerHTML = `
+      <img 
+  src="https://raw.githubusercontent.com/rubiobenitezgael-cloud/snoppy-carta/f7eef26572b8d322646d1b7a37ef530bcddcd141/snopy.png"
+  class="snoopy-carta"
+  crossorigin="anonymous">
+
+        ${textoCarta}
+        
+    `;
+    areaCarta.style.display = "block";
+
+    document.getElementById("btnDescargar").style.display = "block";
+
+}
+
+function descargarCarta() {
+    const carta = document.getElementById("areaCarta");
+
+    document.fonts.ready.then(() => {
+        html2canvas(carta, {
+            scale: 2,
+            useCORS: true
+        }).then(canvas => {
+            const link = document.createElement("a");
+            link.href = canvas.toDataURL("image/png");
+            link.download = "Carta_Snoppy.png";
+            link.click();
+        });
+    });
+}
+
+
+</script>
+
+</body>
+</html>
