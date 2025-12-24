@@ -247,27 +247,39 @@ async function enviarCartaPersonalizada() {
     const texto = document.getElementById('cartaPersonalizada').value.trim();
     const areaCarta = document.getElementById('areaCarta');
 
-    // 1. VALIDACIÓN (Siempre va primero)
     if (!nombre || !texto) {
         alert("Por favor, ingresa tu nombre y escribe un mensaje.");
         return;
     }
 
-    // 2. DIBUJAR LA CARTA (Para que html2canvas tenga algo que fotografiar)
+    // 1. Dibujamos la carta con la imagen asegurada
     areaCarta.innerHTML = `
-      <img src="https://raw.githubusercontent.com/rubiobenitezgael-cloud/snoppy-carta/f7eef26572b8d322646d1b7a37ef530bcddcd141/snopy.png" class="snoopy-carta" crossorigin="anonymous">
-      Queridos Snoppys,\n\n${texto}\n\nAtentamente,\n${nombre}
+      <img src="https://raw.githubusercontent.com/rubiobenitezgael-cloud/snoppy-carta/f7eef26572b8d322646d1b7a37ef530bcddcd141/snopy.png" 
+           class="snoopy-carta" 
+           crossorigin="anonymous" 
+           id="snoopyImg">
+      <div style="white-space: pre-wrap;">Queridos Snoppys,\n\n${texto}\n\nAtentamente,\n${nombre}</div>
     `;
-
     areaCarta.style.display = "block";
-    document.getElementById("btnDescargar").style.display = "none";
-    
-    // AUTO-SCROLL para que el usuario vea su carta
-    areaCarta.scrollIntoView({ behavior: 'smooth' });
 
-    // 3. CONVERTIR A IMAGEN Y ENVIAR (Backend)
+    // 2. PEQUEÑO TRUCO: Esperar un segundo a que la imagen de Snoopy se renderice bien
+    const snoopyImg = document.getElementById('snoopyImg');
+    
+    // Esperamos a que la imagen cargue realmente antes de tomar la foto
+    await new Promise((resolve) => {
+        if (snoopyImg.complete) resolve();
+        else snoopyImg.onload = resolve;
+    });
+
     try {
-        const canvas = await html2canvas(areaCarta, { scale: 2, useCORS: true });
+        // 3. Tomamos la foto con configuraciones extra para imágenes externas
+        const canvas = await html2canvas(areaCarta, { 
+            scale: 2, 
+            useCORS: true, // ¡Vital para que Snoopy aparezca!
+            allowTaint: false,
+            logging: true
+        });
+        
         const imagenBase64 = canvas.toDataURL("image/png");
 
         const URL_BACKEND = "https://snoppy-backend.onrender.com/enviar-carta";
@@ -275,20 +287,15 @@ async function enviarCartaPersonalizada() {
         const respuesta = await fetch(URL_BACKEND, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-                nombre: nombre, 
-                imagen: imagenBase64 
-            })
+            body: JSON.stringify({ nombre: nombre, imagen: imagenBase64 })
         });
 
         if (respuesta.ok) {
-            alert("¡Los Snoppys han recibido tu carta! 🐶🎁");
-        } else {
-            alert("Error al enviar la carta al servidor.");
+            alert("¡Carta enviada con éxito! Revisa tu Telegram.");
         }
-    } catch (error) {
-        console.error("Error:", error);
-        alert("Hubo un problema al procesar la imagen de tu carta.");
+    } catch (e) {
+        console.error(e);
+        alert("Error al generar la imagen.");
     }
 }
 function descargarCarta() {
