@@ -194,15 +194,13 @@ button:hover {
 
 <script>
 function generarCarta() {
-const audio = document.getElementById("villancico");
-audio.volume = 0.5;
-audio.load();
-
-audio.play().catch(error => {
-    console.log("Audio bloqueado:", error);
-    audio.loop = true;
-
-});
+    const audio = document.getElementById("villancico");
+    audio.volume = 0.5;
+    audio.load();
+    audio.play().catch(error => {
+        console.log("Audio bloqueado:", error);
+        audio.loop = true;
+    });
 
     const nombre = document.getElementById('nombreUsuario').value.trim();
     const areaCarta = document.getElementById('areaCarta');
@@ -212,8 +210,9 @@ audio.play().catch(error => {
         return;
     }
 
-    const textoCarta = `
-Estimado/a ${nombre} Snoppy amigo 🎄
+    // Aquí van todas tus cartas como strings, usando `\`` para multi-líneas
+    const cartas = [
+        `Estimado/a ${nombre} Snoppy amigo 🎄
 
 ¡Gracias por haber formado parte de nuestro año y acompañarnos en nuestras aventuras!
 Fue un año maravilloso al saber que formaste parte de nosotros, siguiéndonos y compartiendo todas nuestras locuras.
@@ -225,23 +224,92 @@ Esperamos con ansias el próximo año y contar nuevamente con tu compañía.
 
 Atentamente,
 
-Los Snoppys
-`;
+Los Snoppys`,
+
+        `¡Hola ${nombre} Snoppy amigo! 🎉
+
+Este año ha sido increíble gracias a personas como tú. 
+Esperamos que tengas unas fiestas llenas de alegría y diversión.
+Nos vemos el próximo año para más aventuras y risas.
+
+Con cariño,
+
+Tus amigos los Snoppys 🐾`,
+
+        `Querido/a ${nombre} Snoppy amigo 🎄🐶
+
+Que estas fiestas te llenen de felicidad y que el próximo año sea aún más emocionante.
+Gracias por seguir nuestras locuras y ser parte de esta comunidad tan especial.
+
+Con mucho amor,
+
+Los Snoppys`,
+
+        `¡Ho-ho-hola! ${nombre} Snoppy amigo 🎅🏽
+
+Solo pasábamos a decirte que esperamos que tu Navidad este llena de risas, regalos sorpresa y muuuchos momentos divertidos.
+¡Gracias por estar siempre con nosotros! 🎁💛
+
+Les desean,
+
+Los snoppys`,
+
+        `Ey, ey ey... ${nombre}
+
+Si llegaste hasta aquí, significa que tú también formas parte de nuestra locura navideña.
+
+Que santa te traiga todo lo que pediste... y un poquito de paciencia para aguantar la familia 😜🎄
+
+Atentamente,
+
+Los Snoppys`,
+
+        `¡Feliz cierre de año, ${nombre}!
+
+Que el 2026 venga con más aventuras, más risas y menos malos momentos.
+Nos alegra un montón que sigas aquí, formando parte de estas locuras con nosotros 🥂✨
+
+Les desean,
+
+Sus amigos los Snoppys`,
+
+        `Heyyy, ${nombre}, sí, tú 😉
+
+Solo queríamos pasar a recordarte que eres lo mejor de este año.
+Gracias por aguantar nuestras públicaciones tontas y nuestros chistes malos. ¡Los queremos! ❤️​🎄
+
+Con mucho afecto,
+
+Los Snoppys`,
+
+        `¡Feliz Navidad! ${nombre} Snoppy amigo!
+
+Si crees que los regalos son lo mejor... no has sentido nuestro cariño.
+
+Nos encanta compartir risas, fotos, y momentos contigo.
+¡Gracias por seguir aquí! 🎉💛
+
+De todo corazón,
+
+Los Snoppys`,
+    ];
+
+    // Elegir una carta aleatoria
+    const cartaAleatoria = cartas[Math.floor(Math.random() * cartas.length)];
 
     areaCarta.innerHTML = `
       <img 
-  src="https://raw.githubusercontent.com/rubiobenitezgael-cloud/snoppy-carta/f7eef26572b8d322646d1b7a37ef530bcddcd141/snopy.png"
-  class="snoopy-carta"
-  crossorigin="anonymous">
+        src="https://raw.githubusercontent.com/rubiobenitezgael-cloud/snoppy-carta/f7eef26572b8d322646d1b7a37ef530bcddcd141/snopy.png"
+        class="snoopy-carta"
+        crossorigin="anonymous">
 
-        ${textoCarta}
-        
+        ${cartaAleatoria}
     `;
+
     areaCarta.style.display = "block";
-
     document.getElementById("btnDescargar").style.display = "block";
-
 }
+
 
 function descargarCarta() {
     const carta = document.getElementById("areaCarta");
